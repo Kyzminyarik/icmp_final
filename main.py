@@ -209,8 +209,7 @@ class ConfigLoader:
         with open(file_path, "r") as f:
             return yaml.safe_load(f)
 
-# Точка входа в программу
-if __name__ == "__main__":
+def main():
     try:
         # Загружаем конфигурацию
         config = ConfigLoader.load_config("config.yaml")
@@ -236,3 +235,6 @@ if __name__ == "__main__":
             time.sleep(config["monitoring_interval"])
     except Exception as e:
         logger.record(f"An unexpected error occurred: {e}", "error")
+
+if __name__ == "__main__":
+    main()
