@@ -1,0 +1,12 @@
+devices:
+  - ip: "192.168.73.2"
+    username: "test"
+    password: "testpassword"
+log_path: "monitoring.log"
+max_failures: 3
+smtp_server: "smtp.gmail.com"
+smtp_port: 587
+sender_email: "yaroslavkuzmin11@gmail.com"
+sender_password: "fhgy nwck xjvj cysr"
+recipient_email: "Yaroslav_Kuzmin2002@mail.ru"
+monitoring_interval: 15
