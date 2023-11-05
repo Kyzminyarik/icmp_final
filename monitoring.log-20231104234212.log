@@ -1,8 +1,0 @@
-2023-11-04 23:42:34,076 - ERROR - An unexpected error occurred while configuring device 192.168.73.2: [WinError 10060] Попытка установить соединение была безуспешной, т.к. от другого компьютера за требуемое время не получен нужный отклик, или было разорвано уже установленное соединение из-за неверного отклика уже подключенного компьютера
-2023-11-04 23:42:34,076 - ERROR - Device 192.168.73.2 is not configured for ICMP responses.
-2023-11-04 23:42:34,076 - WARNING - Device 192.168.73.2 is not accessible! Failure count: 1
-2023-11-04 23:42:49,081 - ERROR - Device 192.168.73.2 is not configured for ICMP responses.
-2023-11-04 23:42:49,083 - WARNING - Device 192.168.73.2 is not accessible! Failure count: 2
-2023-11-04 23:43:04,107 - ERROR - Device 192.168.73.2 is not configured for ICMP responses.
-2023-11-04 23:43:04,107 - WARNING - Device 192.168.73.2 is not accessible! Failure count: 3
-2023-11-04 23:43:06,189 - INFO - Notification sent successfully
