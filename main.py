@@ -48,6 +48,8 @@ class Device:
 
             # Читаем вывод команд
             output = shell.recv(65535).decode()
+            if "Invalid input" in output:
+                raise Exception("Invalid command execution")
             logger.record(f"Configuration output for {self.ip}:\n{output}", "info")
             self.is_accessible = True
             logger.record(f"Device {self.ip} configured for ICMP responses.", "info")
@@ -62,7 +64,7 @@ class Device:
             logger.record(f"Error occurred during SSH communication with device {self.ip}: {e}", "error")
             self.is_accessible = False
         except Exception as e:
-            logger.record(f"An unexpected error occurred while configuring device {self.ip}: {e}", "error")
+            logger.record(f"An error occurred while executing commands on device {self.ip}: {e}", "error")
             self.is_accessible = False
         finally:
             # Закрываем соединения
@@ -73,32 +75,51 @@ class Device:
 
 # Управляет группой устройств и проверяет их доступность
 class DeviceManager:
-    def __init__(self, devices, max_failures, notification_manager, logger):
+
+    def __init__(self, devices, max_failures, notification_manager, logger, success_ping_count):
         self.devices = devices
         self.max_failures = max_failures
         self.notification_manager = notification_manager
         self.logger = logger
         self.failures = {device.ip: 0 for device in devices}
         self.successful_pings = {device.ip: 0 for device in devices}
+        self.success_ping_count = success_ping_count
 
-    # Проверяем доступность устройств
-    def check_devices(self):
-        for device in self.devices:
-            monitor = ICMPMonitor(device, self.logger)
-            result = monitor.monitor()
-            if result:
-                self.successful_pings[device.ip] += 1
-                if self.successful_pings[device.ip] >= 3:
-                    self.logger.record(f"Device {device.ip} has responded to ICMP ping 3 times consecutively. Exiting program.", "info")
-                    sys.exit(0)
+
+    def check_device(self, device):
+        monitor = ICMPMonitor(device, self.logger)
+        result = monitor.monitor()
+
+        if not result:
+            self.failures[device.ip] += 1
+            self.logger.record(f"Device {device.ip} is not accessible! Failure count: {self.failures[device.ip]}",
+                               "warning")
+
+            if self.failures[device.ip] >= self.max_failures:
+                # При достижении max_failures, отправляем уведомление и сбрасываем счетчик
+                notification_success = self.notification_manager.send_notification(device.ip)
                 self.failures[device.ip] = 0
-            else:
-                self.failures[device.ip] += 1
-                self.successful_pings[device.ip] = 0
-                self.logger.record(f"Device {device.ip} is not accessible! Failure count: {self.failures[device.ip]}", "warning")
-                if self.failures[device.ip] >= self.max_failures:
-                    if self.notification_manager.send_notification(device.ip):
-                        sys.exit(0)
+                self.logger.record(
+                    f"Notification for {device.ip} {'sent successfully' if notification_success else 'failed to send'}",
+                    "info")
+                return True  # Переходим к следующему устройству, вне зависимости от успешности отправки уведомления
+        else:
+            # Если пинг успешен, сбрасываем счетчик
+            self.successful_pings[device.ip] += 1
+            if self.successful_pings[device.ip] >= self.success_ping_count:
+                self.logger.record(
+                    f"Device {device.ip} responded successfully {self.success_ping_count} times. Moving to the next device.",
+                    "info")
+                self.successful_pings[device.ip] = 0  # Сброс успешных пингов
+                return True
+            self.failures[device.ip] = 0
+
+        return False  # Продолжаем проверять это устройство, если не достигли max_failures
+
+    def configure_devices(self):
+        for device in self.devices:
+            device.configure()
+
 
 # Мониторинг устройства с использованием ICMP пинга
 class ICMPMonitor:
@@ -137,7 +158,6 @@ class NotificationManager:
         else:
             self.logger.record(f"Failed to send notification for {ip}", "error")
             print(f"Critical error: Unable to send notification for device {ip}. Exiting.")
-            sys.exit(1)
         return success
 
 # Класс для логирования
@@ -209,6 +229,11 @@ class ConfigLoader:
         with open(file_path, "r") as f:
             return yaml.safe_load(f)
 
+
+
+
+
+
 def main():
     try:
         # Загружаем конфигурацию
@@ -223,18 +248,24 @@ def main():
     try:
         devices = [Device(**device) for device in config["devices"]]
         notification_manager = NotificationManager(config, logger)
-        device_manager = DeviceManager(devices, config["max_failures"], notification_manager, logger)
+        success_ping_count = config.get("success_ping_count")
+        device_manager = DeviceManager(devices, config["max_failures"], notification_manager, logger,
+                                       success_ping_count)
 
-        # Конфигурирование каждого устройства
+        # Конфигурирование и проверка каждого устройства
         for device in devices:
             device.configure_device(logger)
+            while not device_manager.check_device(device):
+                time.sleep(config["monitoring_interval"])
 
-        # Цикл для мониторинга устройств
-        while True:
-            device_manager.check_devices()
-            time.sleep(config["monitoring_interval"])
+        # Все устройства в списке были обработаны
+        logger.record("All devices in the list have been processed.", "info")
+
     except Exception as e:
         logger.record(f"An unexpected error occurred: {e}", "error")
+
+        # Сообщение о завершении программы
+    logger.record("Monitoring program has finished.", "info")
 
 if __name__ == "__main__":
     main()
