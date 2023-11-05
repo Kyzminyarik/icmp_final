@@ -13,6 +13,6 @@ success_ping_count: 3
 smtp_server: "smtp.gmail.com"
 smtp_port: 587
 sender_email: "yaroslavkuzmin11@gmail.com"
-sender_password: "fhgy nwck xjvj cysr"
+sender_password: "*******"
 recipient_email: "Yaroslav_Kuzmin2002@mail.ru"
 monitoring_interval: 15
