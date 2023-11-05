@@ -1,29 +1,62 @@
-2023-11-04 23:38:37,603 - INFO - Configuration output for 192.168.73.2:
-
-
-***************************************************************
-This is a normal Router with a SW module inside (NM-16ESW)
-It has been preconfigured with hard coded speed and duplex
-
-To create vlans use the command "vlan database" from exec mode
-After creating all desired vlans use "exit" to apply the config
-
-To view existing vlans use the command "show vlan-switch brief"
-
-Warning: You are using an old IOS image for this router.
-Please update the IOS to enable the "macro" command!
-***************************************************************
-
-
-MySwitch#conf t
-Enter configuration commands, one per line.  End with CNTL/Z.
-MySwitch(config)#no ip icmp rate-limit unreachable
-MySwitch(config)#end
-MySwitch#write memory
-Building configuration...
+2023-11-05 14:20:19,695 - INFO - Configuration output for 192.168.73.2:
 
-2023-11-04 23:38:37,603 - INFO - Device 192.168.73.2 configured for ICMP responses.
-2023-11-04 23:38:38,010 - INFO - 192.168.73.2 - Available
-2023-11-04 23:38:53,338 - INFO - 192.168.73.2 - Available
-2023-11-04 23:39:08,632 - INFO - 192.168.73.2 - Available
-2023-11-04 23:39:08,632 - INFO - Device 192.168.73.2 has responded to ICMP ping 3 times consecutively. Exiting program.
+
+
+
+***************************************************************
+
+This is a normal Router with a SW module inside (NM-16ESW)
+
+It has been preconfigured with hard coded speed and duplex
+
+
+
+To create vlans use the command "vlan database" from exec mode
+
+After creating all desired vlans use "exit" to apply the config
+
+
+
+To view existing vlans use the command "show vlan-switch brief"
+
+
+
+Warning: You are using an old IOS image for this router.
+
+Please update the IOS to enable the "macro" command!
+
+***************************************************************
+
+
+
+
+
+MySwitch#conf t
+
+Enter configuration commands, one per line.  End with CNTL/Z.
+
+MySwitch(config)#no ip icmp rate-limit unreachable
+
+MySwitch(config)#end
+
+MySwitch#write memory
+
+Building configuration...
+
+
+2023-11-05 14:20:19,695 - INFO - Device 192.168.73.2 configured for ICMP responses.
+2023-11-05 14:20:19,969 - INFO - 192.168.73.2 - Available
+2023-11-05 14:20:35,146 - INFO - 192.168.73.2 - Available
+2023-11-05 14:20:50,390 - INFO - 192.168.73.2 - Available
+2023-11-05 14:20:50,390 - INFO - Device 192.168.73.2 responded successfully 3 times. Moving to the next device.
+2023-11-05 14:21:11,704 - ERROR - An unexpected error occurred while configuring device 192.168.73.3: [WinError 10060] ������� ���������� ���������� ���� �����������, �.�. �� ������� ���������� �� ��������� ����� �� ������� ������ ������, ��� ���� ��������� ��� ������������� ���������� ��-�� ��������� ������� ��� ������������� ����������
+2023-11-05 14:21:11,704 - ERROR - Device 192.168.73.3 is not configured for ICMP responses.
+2023-11-05 14:21:11,704 - WARNING - Device 192.168.73.3 is not accessible! Failure count: 1
+2023-11-05 14:21:26,717 - ERROR - Device 192.168.73.3 is not configured for ICMP responses.
+2023-11-05 14:21:26,717 - WARNING - Device 192.168.73.3 is not accessible! Failure count: 2
+2023-11-05 14:21:41,751 - ERROR - Device 192.168.73.3 is not configured for ICMP responses.
+2023-11-05 14:21:41,751 - WARNING - Device 192.168.73.3 is not accessible! Failure count: 3
+2023-11-05 14:21:44,790 - INFO - Notification sent successfully
+2023-11-05 14:21:44,791 - INFO - Notification for 192.168.73.3 sent successfully
+2023-11-05 14:21:44,791 - INFO - All devices in the list have been processed.
+2023-11-05 14:21:44,791 - INFO - Monitoring program has finished.
